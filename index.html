@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="bn" class="is-logged-in" data-theme="" dir="ltr" style="--p: #0f766e;"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Shop Management</title>
+<meta name="description" content="Shop Management - সম্পূর্ণ বিক্রয় কাউন্টার (POS), ইনভেন্টরি, হিসাব, ভাউচার প্রিন্ট ও ব্যবসা পরিচালনা সফটওয়্যার।">
+<meta property="og:title" content="Shop Management">
+<meta property="og:description" content="Shop Management - সম্পূর্ণ বিক্রয় কাউন্টার (POS), ইনভেন্টরি, হিসাব, ভাউচার প্রিন্ট ও ব্যবসা পরিচালনা সফটওয়্যার।">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/icon.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="/pwa-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/pwa-512x512.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0f766e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Shop Management">
+<meta name="application-name" content="Shop Management">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.6/JsBarcode.all.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="js/boot.js"></script>
+<link rel="stylesheet" href="css/style.css">  <script src="config.js"></script>
+<script src="js/security.js"></script>
+<script src="js/firebase-loader.js"></script>
+
+</head><body>
+<div id="lg" style="display: none;"><div class="lc"><div class="logo" id="ll" style="border-radius: 50%;">S</div><h2 id="ln">Shop Management</h2>
+<div id="lg-auth-box" style="display:grid;gap:10px">
+<input id="lu" placeholder="ইউজারনেম / Username" autocomplete="username" onkeydown="if(event.key=='Enter')login()">
+<input id="lp" type="password" placeholder="পাসওয়ার্ড / Password" autocomplete="current-password" onkeydown="if(event.key=='Enter')login()">
+<button id="btn-login" onclick="login()">লগইন / Login</button>
+<small id="le" style="color:#dc2626"></small>
+<hr style="border:0;border-top:1px solid var(--bd);margin:2px 0">
+<button class="o" onclick="opn()" id="btn-lg-order">🛍️ অনলাইনে অর্ডার করুন (কাস্টমার)</button>
+</div>
+<div id="lg-customer-box" style="display:none;grid:gap:12px">
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;padding:10px 14px;border-radius:10px;font-size:13px;color:#166534;line-height:1.4">
+স্বাগতম! আপনি সরাসরি আমাদের দোকান থেকে পণ্য নির্বাচন করে অনলাইনে অর্ডার পাঠাতে পারবেন।
+</div>
+<button onclick="opn()" style="background:#16a34a;color:#fff;padding:12px;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 12px rgba(22,163,74,0.3)">
+🛍️ অনলাইনে অর্ডার শুরু করুন
+</button>
+<div style="margin-top:6px">
+<span onclick="window.toggleAdminLoginFromCustomer()" style="font-size:11px;color:#64748b;cursor:pointer;text-decoration:underline">🔒 অ্যাডমিন / স্টাফ লগইন প্যানেল</span>
+</div>
+</div>
+<div style="display:flex;justify-content:center;gap:10px;margin-top:8px;font-size:11px"><span onclick="openLanguageModal()" style="color:var(--p);cursor:pointer;font-weight:700">🌐 ভাষা / Language</span><span style="color:#cbd5e1">•</span><span onclick="window.hardReloadApp()" style="color:var(--p);cursor:pointer;text-decoration:underline">🔄 রিফ্রেশ</span><span style="color:#cbd5e1">•</span><span onclick="window.cleanAppCache()" style="color:#64748b;cursor:pointer;text-decoration:underline">🧹 ক্যাশ রিসেট</span></div></div></div>
+<div id="app" style="display: flex;"><aside id="sd"><nav id="nv"><a id="n_sale" title="বিক্রয় কাউন্টার" onclick="go('sale')"><span>🛒</span><span class="lb"> বিক্রয় কাউন্টার</span></a><a id="n_dash" title="লাইভ ড্যাশবোর্ড" onclick="go('dash')"><span>📊</span><span class="lb"> লাইভ ড্যাশবোর্ড</span></a><a id="n_inv" title="ক্রয় ও ইনভেন্টরি" onclick="go('inv')"><span>📦</span><span class="lb"> ক্রয় ও ইনভেন্টরি</span></a><a id="n_rep" title="বিক্রয় রিপোর্ট ও ফেরত" onclick="go('rep')"><span>🧾</span><span class="lb"> বিক্রয় রিপোর্ট ও ফেরত</span></a><a id="n_cus" title="কাস্টমার খাতা ও স্টেটমেন্ট" onclick="go('cus')"><span>📒</span><span class="lb"> কাস্টমার খাতা ও স্টেটমেন্ট</span></a><a id="n_pl" title="লাভ-ক্ষতি রিপোর্ট" onclick="go('pl')"><span>💹</span><span class="lb"> লাভ-ক্ষতি রিপোর্ট</span></a><a id="n_bar" title="বারকোড স্টিকার প্রিন্ট" onclick="go('bar')"><span>🏷️</span><span class="lb"> বারকোড স্টিকার প্রিন্ট</span></a><a id="n_ex" title="দোকানের খরচ" onclick="go('ex')"><span>💸</span><span class="lb"> দোকানের খরচ</span></a><a id="n_mj" title="মহাজন দেনা/পাওনা" onclick="go('mj')"><span>🤝</span><span class="lb"> মহাজন দেনা/পাওনা</span></a><a id="n_ord" title="অনলাইন অর্ডার" onclick="go('ord')"><span>🌐</span><span class="lb"> অনলাইন অর্ডার</span></a><a id="n_nc" title="নোট কাউন্টার" onclick="go('nc')"><span>💵</span><span class="lb"> নোট কাউন্টার</span></a><a id="n_fx" title="ভুল ঠিক/বাতিল (কারণসহ)" onclick="go('fx')"><span>✏️</span><span class="lb"> ভুল ঠিক/বাতিল (কারণসহ)</span></a><a id="n_acc" title="অ্যাকাউন্ট ও পেমেন্ট" onclick="go('acc')"><span>💳</span><span class="lb"> অ্যাকাউন্ট ও পেমেন্ট</span></a><a id="n_rc" title="সংশোধন কেন্দ্র (সব তথ্য)" onclick="go('rc')"><span>📝</span><span class="lb"> সংশোধন কেন্দ্র (সব তথ্য)</span></a><a id="n_stf" title="সেলসম্যান ও স্টাফ তালিকা" onclick="go('stf')"><span>👥</span><span class="lb"> সেলসম্যান ও স্টাফ তালিকা</span></a><a id="n_au" title="অ্যাক্টিভিটি অডিট হিস্ট্রি" onclick="go('au')"><span>🕵️</span><span class="lb"> অ্যাক্টিভিটি অডিট হিস্ট্রি</span></a><a id="n_set" title="সেটিংস ও ডাটা ব্যাকআপ" onclick="go('set')" class="on"><span>⚙️</span><span class="lb"> সেটিংস ও ডাটা ব্যাকআপ</span></a></nav></aside>
+<main><header><span id="hn" style="font-weight:700">🏪 Shop Management</span><span id="ho" style="display:none!important"></span><span id="hm" title="স্বত্বাধিকারী">👤</span><span id="hs" style="display:none!important"></span><div id="hbg" style="margin-left: auto; display: flex; gap: 6px; align-items: center; flex: 0 0 auto;"><button onclick="cl()" data-tip="ক্লোজিং" class="hb" style="display: inline-flex;">🔒 <span id="btn-closing-label">ক্লোজিং</span></button><button class="hb" onclick="nc()" data-tip="নোট কাউন্টার">💵 <span id="btn-notes-label">নোট কাউন্টার</span></button><button class="hb" onclick="scan()" data-tip="QR স্ক্যান (ভাউচার খুঁজুন)">📷</button><button class="hb" onclick="ca()" data-tip="ক্যালকুলেটর">🧮</button><span id="net-stat" class="bd hb" style="font-size: 11px; background: rgb(21, 128, 61); cursor: default; display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 6px; color: rgb(255, 255, 255); border: 1px solid rgba(255, 255, 255, 0.333); white-space: nowrap; flex: 0 0 auto;" title="নেটওয়ার্ক অবস্থা">🟢 অনলাইন</span><input type="color" id="co" title="থিমের রঙ" oninput="th(this.value)" style="padding: 0px; width: 28px; height: 24px; cursor: pointer; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.333); background: transparent; flex: 0 0 auto;" data-tip="থিমের রং" class="hb"><button class="hb" onclick="dk()" data-tip="ডার্ক/লাইট মোড">🌓</button></div><span id="clk" title="তারিখ ও সময়ের ফরম্যাট বদলান" onclick="tmset()"><span class="clk-cal"><b>Mon, 16 Nov 2026</b></span>&nbsp;<span class="clk-watch"><b>11:00:02 PM</b></span></span></header>
+<div id="sa-inspection-banner" style="display:none;background:#fef3c7;border-bottom:2px solid #f59e0b;padding:8px 14px;color:#92400e;font-size:13px;font-weight:600;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px"></div>
+<div class="tools"><button class="o" onclick="tg()" data-tip="মেনু ছোট/বড় করুন">☰</button><button id="btn-return-admin" class="btn-return-admin" onclick="exitShopInspection()" style="display:none" title="এক ক্লিকে মূল অ্যাডমিন প্যানেলে ফিরে যান"><span>🔙</span> <span class="ra-text-full">মূল অ্যাডমিন প্যানেলে ফিরুন</span><span class="ra-text-mob">মূল অ্যাডমিন</span></button><div class="cb" id="cb"><span>শুরুর ক্যাশ: <b>৳0</b></span><span>আজকের বিক্রয়: <b>৳0</b></span><span>আজকের খরচ: <b>৳0</b></span><span>হাতে আছে: <b>৳0</b></span></div><button class="o" onclick="openLanguageModal()" style="font-weight:700;display:inline-flex;align-items:center;gap:4px" title="ভাষা পরিবর্তন / Select Language">🌐 <span id="tools-lang-label">🇧🇩 বাংলা</span></button><button class="o" id="btn-top-pay-exp" onclick="showPaymentExpiryModal()" style="display:none;font-weight:700;padding:4px 9px;font-size:12px;align-items:center;gap:4px" title="সফটওয়্যার বিল/পেমেন্ট সতর্কবার্তা"></button><button class="o" id="btn-top-prod-exp" onclick="showExpiringProductsModal()" style="display:none;font-weight:700;padding:4px 9px;font-size:12px;align-items:center;gap:4px" title="পণ্যের মেয়াদ শেষ সংক্রান্ত সতর্কতা"></button><button class="o" id="btn-pwa-install" onclick="triggerPwaInstall()" style="font-weight:700;color:var(--p);display:inline-flex;align-items:center;gap:4px">📲 <span id="btn-pwa-label">অ্যাপ ইনস্টল</span></button>
+<div style="margin-left:auto;position:relative"><button class="o" onclick="$('#um').hidden=!$('#um').hidden" id="un">👑 Admin ▾</button><div id="um" hidden="" style="position:absolute;right:0;top:40px;background:var(--cd);border:1px solid var(--bd);border-radius:10px;padding:8px;gap:6px;z-index:6;width:210px"><button class="o" onclick="cpw()" style="width:100%"><span id="um-pw-label">পাসওয়ার্ড</span></button><button class="o" id="um-del-all-btn" onclick="$('#um').hidden=true;oneClickAllDelete()" style="width: 100%; color: rgb(220, 38, 38); font-weight: 700; display: block; font-size: 12px; margin: 4px 0px;">💥 ১-ক্লিকে সব ডাটা ডিলিট</button><button class="d" onclick="lo_()" style="width:100%"><span id="um-lo-label">লগআউট</span></button></div></div></div>
+<div id="pg"><div class="cd">
+<div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:12px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+    <div>
+        <b style="color:#166534;font-size:13px">🛍️ আপনার দোকানের কাস্টমার অনলাইন অর্ডার লিংক</b>
+        <div style="font-family:monospace;font-size:12px;color:#15803d;margin-top:2px;word-break:break-all"></div>
+        <small style="color:#166534">এই লিংকে ক্লিক করলে কাস্টমাররা কোনো পাসওয়ার্ড ছাড়া সরাসরি আপনার পণ্য দেখে অর্ডার পাঠাতে পারবে।</small>
+    </div>
+    <button class="o" onclick="copyOnlineOrderLink('default')" style="font-weight:700;color:#15803d;padding:6px 14px">📋 লিংক কপি করুন</button>
+</div>
+<h3 style="margin-top:14px">🏪 দোকানের তথ্য ও ঠিকানা (ভাউচার, মেমো ও হেডারে দৃশ্যমান)</h3>
+<div style="background:#f8fafc;border:1px solid #cbd5e1;padding:12px 14px;border-radius:10px;margin-bottom:14px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:12px">
+        <div>
+            <label style="font-size:11px;font-weight:700;color:#334155;display:block;margin-bottom:3px">দোকানের নাম:</label>
+            <input id="sn" value="Shop Management" placeholder="যেমন: Shop Management" style="width:100%;font-weight:700">
+        </div>
+        <div>
+            <label style="font-size:11px;font-weight:700;color:#334155;display:block;margin-bottom:3px">মোবাইল নম্বর:</label>
+            <input id="sm" value="" placeholder="যেমন: 017XXXXXXXX" style="width:100%">
+        </div>
+        <div>
+            <label style="font-size:11px;font-weight:700;color:#334155;display:block;margin-bottom:3px">ইমেইল / স্লোগান / ট্রেড লাইসেন্স:</label>
+            <input id="se" value="pksarker1993@gmail.com" placeholder="যেমন: shop@gmail.com" style="width:100%">
+        </div>
+    </div>
+    <!-- একাধিক স্বত্বাধিকারী / প্রোপ্রাইটর ব্যবস্থাপনা -->
+    <div style="background:#f1f5f9;border:1.5px solid #cbd5e1;padding:12px;border-radius:8px;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+            <label style="font-size:12px;font-weight:700;color:#0f766e">👥 স্বত্বাধিকারী / প্রোপ্রাইটর নাম (একাধিক নাম যোগ করার সুবিধা):</label>
+            <button type="button" class="o" onclick="window.addProprietorField()" style="font-size:11px;font-weight:700;color:#0f766e;padding:4px 10px;border-color:#0f766e;background:#fff;border-radius:6px">➕ আরও একজন স্বত্বাধিকারী যোগ করুন</button>
+        </div>
+        <div id="proprietors-list" style="display:grid;gap:6px">
+            
+                    <div class="proprietor-row" style="display:flex;align-items:center;gap:6px">
+                        <span style="font-size:11px;color:#475569;width:82px;flex:none;font-weight:600">স্বত্বাধিকারী 1:</span>
+                        <input class="shop-proprietor-input" value="" placeholder="স্বত্বাধিকারী / মালিকের নাম" style="flex:1;font-size:13px;padding:6px 10px;border-radius:6px;border:1px solid #cbd5e1">
+                        <button type="button" class="d" onclick="this.parentElement.remove();window.renumberProprietorLabels();" style="padding:5px 8px;font-size:11px;border-radius:6px" title="মুছে ফেলুন">🗑</button>
+                    </div>
+                
+                    <div class="proprietor-row" style="display:flex;align-items:center;gap:6px">
+                        <span style="font-size:11px;color:#475569;width:82px;flex:none;font-weight:600">স্বত্বাধিকারী 2:</span>
+                        <input class="shop-proprietor-input" value="Nirmol Sarker" placeholder="স্বত্বাধিকারী / মালিকের নাম" style="flex:1;font-size:13px;padding:6px 10px;border-radius:6px;border:1px solid #cbd5e1">
+                        <button type="button" class="d" onclick="this.parentElement.remove();window.renumberProprietorLabels();" style="padding:5px 8px;font-size:11px;border-radius:6px" title="মুছে ফেলুন">🗑</button>
+                    </div>
+                
+        </div>
+        <small style="color:#64748b;font-size:11px;display:block;margin-top:6px">💡 এখানে একাধিক স্বত্বাধিকারীর নাম যোগ করতে পারেন। সকল নাম প্রিন্ট ভাউচারে ক্রমানুসারে দৃশ্যমান হবে।</small>
+    </div>
+    <div style="margin-bottom:12px">
+        <label style="font-size:11px;font-weight:700;color:#0f766e;display:block;margin-bottom:3px">📍 দোকানের পূর্ণ ঠিকানা (Address):</label>
+        <input id="sa" value="Bhawal Mirzapur Bazar, School Get, Gazipur Sadar, Gazipur" placeholder="দোকানের পূর্ণ ঠিকানা লিখুন (যেমন: বাজার রোড, ঢাকা / রাজশাহী)" style="width:100%;font-size:13px;padding:8px 10px;border-radius:6px;border:1.5px solid #0f766e">
+        <small style="color:#64748b">এই ঠিকানাটি ভাউচার, ক্যাশ মেমো ও স্টেটমেন্টে দৃশ্যমান হবে।</small>
+    </div>
+    <button onclick="window.saveShopSettings()" style="background:#0f766e;color:#fff;font-weight:700;padding:8px 20px;border-radius:6px;border:none;cursor:pointer">💾 দোকানের তথ্য সেভ করুন</button>
+</div>
+
+<h3 style="margin-top:14px">🖨️ প্রিন্টার ও Bluetooth ওয়্যারলেস সংযোগ সেটিংস</h3>
+<div style="background:#f8fafc;border:1px solid #cbd5e1;padding:12px 14px;border-radius:10px;margin-bottom:14px;line-height:1.6">
+    <div style="margin-bottom:12px">
+        <label style="font-size:12px;font-weight:700;color:#334155;display:block;margin-bottom:4px">ডিফল্ট প্রিন্টার ফরম্যাট:</label>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <select onchange="window.setPrinterPreference(this.value)" style="font-size:13px;font-weight:700;padding:7px 12px;border-radius:6px;border:1.5px solid #0f766e">
+                <option value="80">🧾 POS থার্মাল প্রিন্টার (80mm রোল পেপার)</option>
+                <option value="a4" selected="">📄 সাধারণ প্রিন্টার (A4 সাইজ পেজ)</option>
+            </select>
+            <span style="font-size:12px;color:#64748b">ভাউচার প্রিন্ট করার সময় এই পছন্দের ফরম্যাটে স্বয়ংক্রিয়ভাবে প্রিন্ট হবে।</span>
+        </div>
+    </div>
+
+    <!-- Bluetooth Management Card in Settings -->
+    <div style="background:#eff6ff;border:1.5px solid #93c5fd;border-radius:10px;padding:12px;margin-top:8px">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+            <div>
+                <b style="color:#1d4ed8;font-size:13px;display:flex;align-items:center;gap:6px">
+                    📶 মোবাইলে Bluetooth থার্মাল প্রিন্টার ও স্ক্যানার সংযোগ
+                </b>
+                <div style="font-size:12px;color:#1e40af;margin-top:2px">
+                    কানেকশন অবস্থা: <b id="set-bt-status">⚪ কোনো প্রিন্টার কানেক্টেড নেই</b>
+                </div>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <button onclick="connectBluetoothPrinter()" style="background:#0284c7;color:#fff;font-weight:700;padding:7px 14px;border-radius:6px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px">
+                    📶 Bluetooth প্রিন্টার পরিচালনা / কানেক্ট
+                </button>
+                
+            </div>
+        </div>
+        <div style="font-size:11px;color:#475569;margin-top:8px;border-top:1px dashed #bfdbfe;padding-top:6px">
+            💡 অ্যান্ড্রয়েড স্মার্টফোনে ব্লুটুথ অন রেখে 58mm/80mm পোর্টেবল প্রিন্টার পেয়ার করুন। এছাড়া RawBT অ্যাপ ও ব্লুটুথ বারকোড স্ক্যানার দিয়েও যেকোনো ডিভাইস থেকে সরাসরি প্রিন্ট করা যায়।
+        </div>
+    </div>
+</div>
+<h3 style="margin-top:14px">🧾 ভাউচারের শেষ বার্তা</h3><small>এখানে যা লিখবেন সেটাই প্রিন্ট ভাউচারের নিচে ছাপা হবে।</small><textarea id="vmt" rows="3" style="width:100%;margin:6px 0">ধন্যবাদ, আবার আসবেন ! আপনার দিনটি শুভ হোক।</textarea><div class="r"><button onclick="S.vm=$('#vmt').value;log('ভাউচার বার্তা পরিবর্তন');sv();alert('✅ ভাউচার বার্তা সেভ হয়েছে')">সেভ</button><button class="o" onclick="vprev()">👁 প্রিভিউ</button><button class="o" onclick="S.vm=null;sv();go('set')">ডিফল্ট বার্তা</button></div>
+<h3 style="margin-top:14px">🖼️ দোকানের লোগো</h3><div class="r"><label style="cursor:pointer;background:var(--p);color:#fff;padding:7px 12px;border-radius:8px">📤 লোগো আপলোড<input type="file" accept="image/*" hidden="" onchange="lgo(this)"></label></div>
+<h3 style="margin-top:14px">☁️ ক্লাউড ডাটাবেজ ও লাইভ সিঙ্ক স্ট্যাটাস</h3>
+<div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+    <div>
+        <b style="color:#166534;font-size:13px;display:inline-flex;align-items:center;gap:6px">
+            ☁️ গুগল ক্লাউড ফায়ারবেস লাইভ ডাটাবেজ
+            <span style="width:8px;height:8px;border-radius:50%;background:#16a34a;display:inline-block"></span>
+        </b>
+        <div style="font-size:12px;color:#15803d;margin-top:2px">
+            আপনার দোকানের সকল পণ্য, বিক্রয় ও কাস্টমার হিসাব স্বয়ংক্রিয়ভাবে লাইভ ক্লাউডে সিঙ্ক ও সুরক্ষিত আছে।
+        </div>
+    </div>
+    <button type="button" onclick="showCloudStatusModal()" style="background:#0f766e;color:#fff;font-weight:700;padding:8px 16px;border-radius:7px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(15,118,110,0.25)">
+        ☁️ ক্লাউড ডাটাবেজ স্ট্যাটাস দেখুন
+    </button>
+</div>
+<h3 style="margin-top:14px">🔐 পাসওয়ার্ড ও অ্যাকাউন্ট নিরাপত্তা</h3>
+<div style="background:#f8fafc;border:1px solid #cbd5e1;padding:12px 14px;border-radius:10px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+    <div>
+        <b style="color:#0f766e;font-size:13px;display:inline-flex;align-items:center;gap:6px">
+            🔑 পাসওয়ার্ড পরিবর্তন করুন (Admin)
+        </b>
+        <div style="font-size:12px;color:#475569;margin-top:2px">
+            পাসওয়ার্ড পরিবর্তন করলে পূর্বের পাসওয়ার্ড তাৎক্ষণিকভাবে সম্পূর্ণ ধ্বংস ও বাতিল হয়ে যাবে। যেকোনো অনলাইন সাইট বা ডোমেইনে পূর্বের পাসওয়ার্ড দিয়ে আর লগইন করা যাবে না।
+        </div>
+    </div>
+    <button type="button" onclick="cpw()" style="background:#0f766e;color:#fff;font-weight:700;padding:8px 16px;border-radius:7px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(15,118,110,0.25)">
+        🔑 পাসওয়ার্ড পরিবর্তন
+    </button>
+</div>
+<h3 style="margin-top:14px">ব্যাকআপ / এক্সপোর্ট</h3><div class="r"><button onclick="dl('backup-'+td()+'.json',JSON.stringify(S))">💾 ব্যাকআপ (JSON)</button><button class="o" onclick="csv('sales')">📗 বিক্রয় (Excel/CSV)</button><button class="o" onclick="csv('pr')">📗 পণ্য (Excel/CSV)</button><button class="o" onclick="openCleanPrintWindow($('#pg').innerHTML,'a4')">📄 PDF / প্রিন্ট রিপোর্ট</button><button class="d" onclick="oneClickAllDelete()" style="font-weight:700">🗑 ১-ক্লিকে সব ডাটা ডিলিট</button><label style="cursor:pointer;background:var(--cd);border:1px solid var(--bd);padding:7px 12px;border-radius:8px">📥 রিস্টোর <input type="file" accept=".json" hidden="" onchange="rst(this)"></label></div>
+
+<div style="margin-top:16px;background:#fef2f2;border:1.5px solid #ef4444;border-radius:10px;padding:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <div>
+            <b style="color:#b91c1c;font-size:14px">💥 ১-ক্লিকে সব ডাটা ডিলিট ও ফ্রেশ রিসেট (ফ্যাক্টরি মোড)</b>
+            <div style="font-size:12px;color:#7f1d1d;margin-top:2px">
+                দোকানের সকল পণ্য, স্টক, কাস্টমার, বাকি, বিক্রয় ও খরচের হিসাব মুছে সম্পূর্ণ ফ্রেশ শুরু করার অপশন।
+                <br><span style="color:#15803d">🛡️ এটি শুধুমাত্র অ্যাডমিন ব্যবহার করতে পারবে। সেলসম্যানের জন্য এটি সম্পূর্ণ বন্ধ থাকে।</span>
+            </div>
+        </div>
+        <button class="d" onclick="oneClickAllDelete()" style="background:#dc2626;color:#fff;font-weight:700;padding:9px 18px;border-radius:8px;font-size:13px;border:none;cursor:pointer;box-shadow:0 2px 8px rgba(220,38,38,0.35)">
+            🗑️ ১-ক্লিকে সব ডাটা ডিলিট করুন
+        </button>
+    </div>
+</div>
+
+
+    <div style="background:#f0fdf4;border:2px solid #16a34a;border-radius:14px;padding:16px;margin-top:16px;box-shadow:0 4px 14px rgba(22,163,74,0.12)">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;border-bottom:1px solid #bbf7d0;padding-bottom:10px">
+            <div>
+                <h3 style="margin:0;color:#166534;display:flex;align-items:center;gap:6px">🔓 ডেভেলপার ও ডিপ্লয়মেন্ট সেন্টার (শুধুমাত্র আপনার জন্য)</h3>
+                <small style="color:#15803d">এই অপশনগুলো ক্লায়েন্টের অ্যাকাউন্টে সম্পূর্ণ অদৃশ্য থাকে। শুধুমাত্র আপনি মাস্টার পিন দিয়ে অ্যাক্সেস করতে পারবেন।</small>
+            </div>
+            <div style="display:flex;gap:6px">
+                <button class="o" onclick="changeDevPinPrompt()" style="font-size:12px;padding:4px 8px">🔑 পিন পরিবর্তন</button>
+                <button class="d" onclick="lockDevMode()" style="font-size:12px;padding:4px 10px">🔒 এখনই লক করুন</button>
+            </div>
+        </div>
+        
+        <h4 style="margin-top:12px;color:#0f766e">📥 সফটওয়্যার ডাউনলোড ও অফলাইন ইনস্টল</h4>
+        <div class="r">
+            <button onclick="downloadStandaloneSoftware()" style="background:#0f766e;color:#fff;font-weight:700">⏳ ফাইল তৈরি হচ্ছে...</button>
+            <button class="o" onclick="downloadWindowsDesktopShortcut()">🖥️ Windows শর্টকাট ডাউনলোড</button>
+        </div>
+
+        <h4 style="margin-top:12px;color:#0284c7">🚀 ক্লায়েন্ট ডেলিভারি ও ডিপ্লয়মেন্ট প্যাকেজ</h4>
+        <div class="r">
+            <button onclick="go('saas')" style="background:#0f766e;color:#fff;font-weight:700">🏢 ক্লায়েন্ট শপসমূহ ও লাইসেন্স পোর্টাল</button>
+            <button onclick="downloadProjectZip()" style="background:#0284c7;color:#fff;font-weight:700">📦 সম্পূর্ণ সোর্স কোড (.ZIP)</button>
+            <button onclick="downloadDistZip()" style="background:#16a34a;color:#fff;font-weight:700">🌐 হোস্টিং রেডি বিল্ড ফাইল (.ZIP)</button>
+            <button class="o" onclick="showDeployGuideModal()" style="font-weight:700">📖 সম্পূর্ণ হোস্টিং নির্দেশিকা</button>
+        </div>
+    </div></div></div></main></div><div id="md" onclick="if(event.target==this)mx()"><div id="mb"></div></div><div id="pa"></div><div id="od" style="display: none;"><div class="w" id="ow"></div></div><div id="pos-print-screen" style="display:none"></div>
+<script src="js/app-01-core-tenants.js"></script>
+<script src="js/app-02-login-session.js"></script>
+<script src="js/app-03-sales-cloud-status.js"></script>
+<script src="js/app-04-inventory-dashboard-reports.js"></script>
+<script src="js/app-05-purchase-expense-orders-saas.js"></script>
+<script src="js/app-06-audit-settings.js"></script>
+<script src="js/app-07-staff-history-qr.js"></script>
+<script src="js/app-08-scan-accounts.js"></script>
+<script src="js/app-09-online-orders.js"></script>
+<script src="js/app-10-daybook-payments.js"></script>
+<script src="js/app-11-corrections.js"></script>
+<script src="js/app-12-statements-pwa.js"></script>
+<script src="js/app-13-salary-dev-center.js"></script>
+<script src="js/app-14-branches.js"></script>
+<script src="js/app-15-saas-billing.js"></script><div id="tip" style="display: none;"></div>
+</body></html>
